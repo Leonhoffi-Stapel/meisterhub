@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MeisterHub</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f3f5f9;color:#172033}
+header{background:#14213d;color:white;padding:24px 18px}
+header h1{margin:0;font-size:30px}
+header p{color:#cbd5e1}
+main{max-width:750px;margin:auto;padding:18px}
+.card{background:white;padding:18px;border-radius:16px;margin-bottom:16px;box-shadow:0 3px 12px #14213d0b}
+h2{font-size:20px;margin-top:0}
+input,select,button{width:100%;padding:13px;margin:6px 0;border-radius:9px;font-size:16px}
+input,select{border:1px solid #ccd3df;background:white}
+button{background:#2563eb;color:white;border:0;font-weight:bold;cursor:pointer}
+.secondary{background:#e8efff;color:#1d4ed8}
+.tag{display:inline-block;background:#e8efff;color:#1d4ed8;padding:6px 10px;border-radius:20px;font-size:13px}
+.room{border:1px solid #e2e8f0;padding:14px;border-radius:12px;margin-top:10px}
+footer{text-align:center;color:#64748b;padding:20px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🎓 MeisterHub</h1>
+  <p>Gemeinsam lernen. Zusammen bestehen.</p>
+  <span class="tag">Industriemeister Metall & mehr</span>
+</header>
+<main>
+  <section class="card">
+    <h2>👋 Willkommen bei MeisterHub</h2>
+    Finde Lernpartner, bilde Lerngruppen und bereite dich gemeinsam auf deine Prüfung vor.
+  </section>
+
+  <section class="card">
+    <h2>👤 Dein Lernprofil</h2>
+    <input id="name" placeholder="Dein Name oder Spitzname">
+    <select id="fach">
+      <option>Industriemeister Metall</option>
+      <option>Industriemeister Elektrotechnik</option>
+      <option>Logistikmeister</option>
+      <option>Technischer Fachwirt</option>
+      <option>Andere Weiterbildung</option>
+    </select>
+    <select id="ziel">
+      <option>BQ-Prüfung vorbereiten</option>
+      <option>HQ-Prüfung vorbereiten</option>
+      <option>NTG lernen</option>
+      <option>Gemeinsam alle Fächer lernen</option>
+      <option>AEVO vorbereiten</option>
+    </select>
+    <button onclick="saveProfile()">Profil speichern</button>
+    <p id="profileStatus"></p>
+  </section>
+
+  <section class="card">
+    <h2>🤝 Lerngruppe finden</h2>
+    <p>Wähle aus, wie du lernen möchtest.</p>
+    <button onclick="showRooms('spontan')">⚡ Spontanes Lernmatching</button>
+    <button class="secondary" onclick="showRooms('klein')">👥 Kleine Lerngruppe (2–5 Personen)</button>
+    <button class="secondary" onclick="showRooms('gross')">🏫 Großer Lernraum (6–20 Personen)</button>
+    <div id="rooms"></div>
+  </section>
+
+  <section class="card">
+    <h2>📅 Lerntreffen erstellen</h2>
+    <input id="meetingTitle" placeholder="Thema, z. B. NTG – Statistik">
+    <input id="meetingDate" type="datetime-local">
+    <select id="meetingSize">
+      <option>2–5 Personen</option>
+      <option>6–20 Personen</option>
+    </select>
+    <button onclick="createMeeting()">Treffen erstellen</button>
+    <div id="meetings"></div>
+  </section>
+
+  <section class="card">
+    <h2>💬 Austausch</h2>
+    <p>In der nächsten Ausbaustufe kommen echte Chats, Sprachräume und optionale Video-Lerntreffen dazu.</p>
+    <span class="tag">Profile</span>
+    <span class="tag">Matching</span>
+    <span class="tag">Lerntreffen</span>
+  </section>
+</main>
+<footer>MeisterHub · Gemeinsam zum Meistertitel</footer>
+<script>
+function saveProfile(){
+ const name=document.getElementById('name').value.trim();
+ if(!name){alert('Bitte gib einen Namen ein.');return}
+ const profile={
+  name:name,
+  fach:document.getElementById('fach').value,
+  ziel:document.getElementById('ziel').value
+ };
+ localStorage.setItem('meisterhubProfile',JSON.stringify(profile));
+ document.getElementById('profileStatus').textContent=
+ 'Profil auf diesem Gerät gespeichert: '+profile.name+' · '+profile.ziel;
+}
+function showRooms(type){
+ const messages={
+  spontan:'⚡ Du suchst spontane Lernpartner. Das Matching ist aktuell eine Demo.',
+  klein:'👥 Kleine Lerngruppe: ideal zum gemeinsamen Rechnen und Wiederholen.',
+  gross:'🏫 Großer Lernraum: ideal für Prüfungsvorbereitung und Erfahrungsaustausch.'
+ };
+ document.getElementById('rooms').innerHTML=
+ '<div class="room">'+messages[type]+'</div>';
+}
+function createMeeting(){
+ const title=document.getElementById('meetingTitle').value.trim();
+ const date=document.getElementById('meetingDate').value;
+ const size=document.getElementById('meetingSize').value;
+ if(!title||!date){alert('Bitte Thema und Termin eintragen.');return}
+ const item=document.createElement('div');
+ item.className='room';
+ const heading=document.createElement('strong');
+ heading.textContent=title;
+ const details=document.createElement('p');
+ details.textContent=new Date(date).toLocaleString('de-DE')+' · '+size;
+ item.append(heading,details);
+ document.getElementById('meetings').prepend(item);
+ document.getElementById('meetingTitle').value='';
+}
+const saved=localStorage.getItem('meisterhubProfile');
+if(saved){
+ const p=JSON.parse(saved);
+ document.getElementById('name').value=p.name;
+ document.getElementById('fach').value=p.fach;
+ document.getElementById('ziel').value=p.ziel;
+}
+</script>
+</body>
+</html>
